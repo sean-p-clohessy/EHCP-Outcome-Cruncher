@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Turn broad EHCP outcomes and descriptions of need into editable stepping-stone outcomes." />
+    <meta name="theme-color" content="#0d1426" />
+    <title>EHCP Outcome Cruncher</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#workspace">Skip to outcome workspace</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="EHCP Outcome Cruncher home">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span>
+          <strong>EHCP Outcome Cruncher</strong>
+          <small>From broad outcomes to workable steps</small>
+        </span>
+      </a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="true">
+        <span aria-hidden="true">◐</span>
+        <span id="themeLabel">Dark mode</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Outcome development workspace</p>
+          <h1 id="hero-title">Find the achievable steps inside a broad EHCP outcome.</h1>
+          <p class="lede">Keep the destination ambitious. Separate the learner’s progress from the support they are entitled to. Then shape a useful next step.</p>
+          <nav class="flow" aria-label="Tool workflow">
+            <button type="button" data-nav-step="1">Need or outcome</button><b aria-hidden="true">→</b><button type="button" data-nav-step="2" disabled>Outcome strand</button><b aria-hidden="true">→</b><button type="button" data-nav-step="3" disabled>Stepping stones</button><b aria-hidden="true">→</b><a href="https://sean-p-clohessy.github.io/SMARTTargetBuilder/" target="_blank" rel="noopener">SMART target <span aria-hidden="true">↗</span></a>
+          </nav>
+        </div>
+        <aside class="privacy-card" aria-label="Privacy reminder">
+          <span class="privacy-icon" aria-hidden="true">◇</span>
+          <div>
+            <strong>Your information stays in this browser</strong>
+            <p>Use anonymised wording. Do not enter names, medical details, safeguarding information or other personal data.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="workspace" id="workspace" aria-labelledby="workspace-title">
+        <div class="workspace-head">
+          <div>
+            <p class="eyebrow">Prototype workspace</p>
+            <h2 id="workspace-title">Crunch an outcome</h2>
+          </div>
+          <ol class="stepper" aria-label="Progress">
+            <li class="active" data-step-indicator="1"><button type="button" data-nav-step="1"><span>1</span>Starting point</button></li>
+            <li data-step-indicator="2"><button type="button" data-nav-step="2" disabled><span>2</span>Choose strand</button></li>
+            <li data-step-indicator="3"><button type="button" data-nav-step="3" disabled><span>3</span>Shape steps</button></li>
+          </ol>
+        </div>
+
+        <div class="panel active" data-panel="1">
+          <div class="panel-heading">
+            <p class="step-label">Step 1 of 3</p>
+            <h3>What are we working from?</h3>
+            <p>Paste a broad outcome or describe the learner’s difficulty. Add provision separately so it is protected throughout the process.</p>
+          </div>
+
+          <div class="example-strip">
+            <label for="exampleSelect">Start with an anonymised example</label>
+            <div class="inline-control">
+              <select id="exampleSelect">
+                <option value="">Choose an example…</option>
+                <optgroup label="Accessing and recording work">
+                  <option value="recording">• Handwriting and recording work</option>
+                </optgroup>
+                <optgroup label="Understanding and organising learning">
+                  <option value="processing">• Processing instructions</option>
+                  <option value="memory">• Remembering and retaining instructions</option>
+                </optgroup>
+                <optgroup label="Attention and engagement">
+                  <option value="attention">• Concentration and focus</option>
+                </optgroup>
+                <optgroup label="Using support and learning aids">
+                  <option value="support">• Remembering to use an agreed learning aid</option>
+                </optgroup>
+              </select>
+              <button class="button secondary" id="loadExample" type="button">Load example</button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <label class="field field-wide">
+              <span>EHCP outcome or description of need <em>Required</em></span>
+              <small>Keep the wording broad at this stage—the tool will help unpack it.</small>
+              <textarea id="sourceText" rows="5" maxlength="700" placeholder="For example: The learner has difficulty processing and understanding verbal and written instructions."></textarea>
+              <span class="counter"><span id="sourceCount">0</span> / 700</span>
+            </label>
+
+            <label class="field">
+              <span>Current starting point</span>
+              <small>What can the learner do now, and when do they need help?</small>
+              <textarea id="startingPoint" rows="5" maxlength="500" placeholder="For example: Follows one familiar instruction when it is repeated and supported by a visual prompt."></textarea>
+            </label>
+
+            <label class="field provision-field">
+              <span>Support or provision that must remain in place</span>
+              <small>This belongs to staff or the setting—not to the learner.</small>
+              <textarea id="provisionText" rows="5" maxlength="700" placeholder="For example: Staff provide written instructions, break tasks into manageable chunks and check understanding."></textarea>
+            </label>
+          </div>
+
+          <div class="validation-message" id="sourceError" role="alert" hidden>Please enter an outcome or description of need.</div>
+          <div class="panel-actions end">
+            <button class="button primary" id="toStrands" type="button">Find outcome strands <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="2" hidden>
+          <div class="panel-heading">
+            <p class="step-label">Step 2 of 3</p>
+            <h3>Which part should we work on first?</h3>
+            <p>The recommended strand is based on language in the source text. Professional judgement decides the best fit.</p>
+          </div>
+          <div class="source-summary">
+            <span>Working from</span>
+            <p id="sourceSummary"></p>
+          </div>
+          <div class="strand-grid" id="strandGrid" role="radiogroup" aria-label="Outcome strand"></div>
+          <div class="panel-actions split">
+            <button class="button ghost" data-back="1" type="button">← Edit starting point</button>
+            <button class="button primary" id="buildSteps" type="button">Build stepping stones <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <div class="panel" data-panel="3" hidden>
+          <div class="panel-heading result-heading">
+            <div>
+              <p class="step-label">Step 3 of 3</p>
+              <h3>Shape the stepping stones</h3>
+              <p>Edit the draft so it reflects the learner, their aspirations and the support that remains available.</p>
+            </div>
+            <span class="prototype-badge">Draft for professional review</span>
+          </div>
+
+          <div class="result-layout">
+            <div class="result-main">
+              <label class="field outcome-draft">
+                <span>Draft learner-centred outcome</span>
+                <small>This describes the destination; it is not yet the short-term target.</small>
+                <textarea id="outcomeDraft" rows="4"></textarea>
+              </label>
+
+              <div class="stones-heading">
+                <div>
+                  <span class="field-title">Suggested stepping stones</span>
+                  <small>Ordered from supported participation towards confident use across contexts.</small>
+                </div>
+                <button class="button ghost compact" id="resetSteps" type="button">Reset wording</button>
+              </div>
+              <div class="stones" id="stonesList"></div>
+            </div>
+
+            <aside class="result-aside">
+              <div class="guardrail-card provision-card">
+                <p class="card-kicker">Provision preserved</p>
+                <h4>What staff or the setting will do</h4>
+                <p id="provisionSummary"></p>
+              </div>
+              <div class="guardrail-card">
+                <p class="card-kicker">Quality check</p>
+                <h4>Before using a step</h4>
+                <ul class="check-list">
+                  <li><span>✓</span> Builds towards the broad outcome</li>
+                  <li><span>✓</span> Describes an observable learner action</li>
+                  <li><span>✓</span> Does not remove agreed provision</li>
+                  <li><span>✓</span> Can be personalised with the learner</li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+
+          <div class="selection-bar">
+            <div>
+              <span class="selection-count" id="selectionCount">Step 1 selected</span>
+              <small>Take one achievable step into the SMART Target Builder to add measures and a review date.</small>
+            </div>
+            <div class="selection-actions">
+              <button class="button secondary" id="copyStep" type="button">Copy selected step</button>
+              <a class="button primary" id="smartLink" href="https://sean-p-clohessy.github.io/SMARTTargetBuilder/" target="_blank" rel="noopener">Open SMART Target Builder ↗</a>
+            </div>
+          </div>
+
+          <div class="panel-actions split final-actions">
+            <button class="button ghost" data-back="2" type="button">← Change strand</button>
+            <button class="button ghost" id="printOutcome" type="button">Print summary</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="principles" aria-labelledby="principles-title">
+        <p class="eyebrow">Built for thoughtful conversations</p>
+        <h2 id="principles-title">Ambition stays high. The next step becomes clearer.</h2>
+        <div class="principle-grid">
+          <article><span aria-hidden="true">✓</span><h3>Rule-based and transparent</h3><p>The same input choices produce the same suggested progression. No external AI is involved.</p></article>
+          <article><span aria-hidden="true">◎</span><h3>Provision stays separate</h3><p>Staff responsibilities remain visible and are never turned into learner compliance targets.</p></article>
+          <article><span aria-hidden="true">◇</span><h3>Professional judgement leads</h3><p>Every outcome and stepping stone remains editable before it enters formal planning.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>Outcome Cruncher provides suggested wording only.</strong> Staff should use professional judgement, involve the learner and follow organisational processes.</p>
+      <p>Rule-based · No learner-data storage · Prototype outcome bank</p>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
