@@ -32,7 +32,7 @@
           <h1 id="hero-title">Find the achievable steps inside a broad EHCP outcome.</h1>
           <p class="lede">Keep the destination ambitious. Separate the learner’s progress from the support they are entitled to. Then shape a useful next step.</p>
           <nav class="flow" aria-label="Tool workflow">
-            <button type="button" data-nav-step="1">Need or outcome</button><b aria-hidden="true">→</b><button type="button" data-nav-step="2" disabled>Outcome strand</button><b aria-hidden="true">→</b><button type="button" data-nav-step="3" disabled>Stepping stones</button><b aria-hidden="true">→</b><a href="https://sean-p-clohessy.github.io/SMARTTargetBuilder/" target="_blank" rel="noopener">SMART target <span aria-hidden="true">↗</span></a>
+            <button type="button" data-nav-step="1">Need or outcome</button><b aria-hidden="true">→</b><button type="button" data-nav-step="2" disabled>Crunched outcome</button><b aria-hidden="true">→</b><a href="https://sean-p-clohessy.github.io/SMARTTargetBuilder/" target="_blank" rel="noopener">SMART target <span aria-hidden="true">↗</span></a>
           </nav>
         </div>
         <aside class="privacy-card" aria-label="Privacy reminder">
@@ -51,15 +51,14 @@
             <h2 id="workspace-title">Crunch an outcome</h2>
           </div>
           <ol class="stepper" aria-label="Progress">
-            <li class="active" data-step-indicator="1"><button type="button" data-nav-step="1"><span>1</span>Starting point</button></li>
-            <li data-step-indicator="2"><button type="button" data-nav-step="2" disabled><span>2</span>Choose strand</button></li>
-            <li data-step-indicator="3"><button type="button" data-nav-step="3" disabled><span>3</span>Shape steps</button></li>
+            <li class="active" data-step-indicator="1"><button type="button" data-nav-step="1"><span>1</span>Need or outcome</button></li>
+            <li data-step-indicator="2"><button type="button" data-nav-step="2" disabled><span>2</span>Crunched outcome</button></li>
           </ol>
         </div>
 
         <div class="panel active" data-panel="1">
           <div class="panel-heading">
-            <p class="step-label">Step 1 of 3</p>
+            <p class="step-label">Step 1 of 2</p>
             <h3>What are we working from?</h3>
             <p>Paste a broad outcome or describe the learner’s difficulty. Add provision separately so it is protected throughout the process.</p>
           </div>
@@ -67,25 +66,15 @@
           <div class="example-strip">
             <label for="exampleSelect">Start with an anonymised example</label>
             <div class="inline-control">
-              <select id="exampleSelect">
-                <option value="">Choose an example…</option>
-                <optgroup label="Accessing and recording work">
-                  <option value="recording">• Handwriting and recording work</option>
-                </optgroup>
-                <optgroup label="Understanding and organising learning">
-                  <option value="processing">• Processing instructions</option>
-                  <option value="memory">• Remembering and retaining instructions</option>
-                </optgroup>
-                <optgroup label="Attention and engagement">
-                  <option value="attention">• Concentration and focus</option>
-                </optgroup>
-                <optgroup label="Using support and learning aids">
-                  <option value="support">• Remembering to use an agreed learning aid</option>
-                </optgroup>
-              </select>
+              <select id="exampleSelect"><option value="">Choose an example…</option></select>
               <button class="button secondary" id="loadExample" type="button">Load example</button>
             </div>
           </div>
+
+          <aside class="specialist-note">
+            <span aria-hidden="true">i</span>
+            <p><strong>Complex or exceptional outcome?</strong> Use this bank as a conversation starter and involve the SEND team for specialist advice.</p>
+          </aside>
 
           <div class="form-grid">
             <label class="field field-wide">
@@ -108,37 +97,45 @@
             </label>
           </div>
 
+          <fieldset class="nww-box" id="nwwBox">
+            <legend>Normal way of working (NWW)</legend>
+            <div class="nww-copy">
+              <strong>Does this support include a routine access arrangement?</strong>
+              <p>For example: a word processor, extra time, supervised rest breaks, a reader, a scribe or assistive technology.</p>
+            </div>
+            <div class="nww-options">
+              <label><input type="radio" name="nww" value="yes" /> <span>NWW needed</span></label>
+              <label><input type="radio" name="nww" value="no" checked /> <span>No / not sure</span></label>
+            </div>
+            <div class="nww-alert" id="nwwAlert" hidden>
+              <span aria-hidden="true">!</span>
+              <div><strong>NWW action needed</strong><p>Complete your centre’s normal way of working interview/form and follow the agreed access-arrangements process. This flag does not approve an examination arrangement.</p></div>
+            </div>
+          </fieldset>
+
           <div class="validation-message" id="sourceError" role="alert" hidden>Please enter an outcome or description of need.</div>
           <div class="panel-actions end">
-            <button class="button primary" id="toStrands" type="button">Find outcome strands <span aria-hidden="true">→</span></button>
+            <button class="button primary" id="crunchOutcome" type="button">Crunch this outcome <span aria-hidden="true">→</span></button>
           </div>
         </div>
 
         <div class="panel" data-panel="2" hidden>
-          <div class="panel-heading">
-            <p class="step-label">Step 2 of 3</p>
-            <h3>Which part should we work on first?</h3>
-            <p>The recommended strand is based on language in the source text. Professional judgement decides the best fit.</p>
-          </div>
-          <div class="source-summary">
-            <span>Working from</span>
-            <p id="sourceSummary"></p>
-          </div>
-          <div class="strand-grid" id="strandGrid" role="radiogroup" aria-label="Outcome strand"></div>
-          <div class="panel-actions split">
-            <button class="button ghost" data-back="1" type="button">← Edit starting point</button>
-            <button class="button primary" id="buildSteps" type="button">Build stepping stones <span aria-hidden="true">→</span></button>
-          </div>
-        </div>
-
-        <div class="panel" data-panel="3" hidden>
           <div class="panel-heading result-heading">
             <div>
-              <p class="step-label">Step 3 of 3</p>
+              <p class="step-label">Step 2 of 2</p>
               <h3>Shape the stepping stones</h3>
               <p>Edit the draft so it reflects the learner, their aspirations and the support that remains available.</p>
             </div>
             <span class="prototype-badge">Draft for professional review</span>
+          </div>
+
+          <div class="strand-summary">
+            <div><span>Best-fit outcome strand</span><strong id="strandName"></strong></div>
+            <button class="button ghost compact" id="changeStrand" type="button" aria-expanded="false" aria-controls="strandChooser">Change suggestion</button>
+          </div>
+          <div class="strand-chooser" id="strandChooser" hidden>
+            <p>Choose a different strand to rebuild the draft. This is optional—the suggested strand is only a starting point.</p>
+            <div class="strand-grid" id="strandGrid" role="radiogroup" aria-label="Outcome strand"></div>
           </div>
 
           <div class="result-layout">
@@ -165,6 +162,11 @@
                 <h4>What staff or the setting will do</h4>
                 <p id="provisionSummary"></p>
               </div>
+              <div class="guardrail-card nww-result" id="nwwResult" hidden>
+                <p class="card-kicker">NWW action</p>
+                <h4>Normal way of working form needed</h4>
+                <p>Complete the NWW interview/form and follow your centre’s access-arrangements process. Refer to the SEND/exams team where advice or formal evidence is required.</p>
+              </div>
               <div class="guardrail-card">
                 <p class="card-kicker">Quality check</p>
                 <h4>Before using a step</h4>
@@ -190,7 +192,7 @@
           </div>
 
           <div class="panel-actions split final-actions">
-            <button class="button ghost" data-back="2" type="button">← Change strand</button>
+            <button class="button ghost" data-back="1" type="button">← Edit need or outcome</button>
             <button class="button ghost" id="printOutcome" type="button">Print summary</button>
           </div>
         </div>
