@@ -104,6 +104,8 @@ h4 { margin-bottom: .55rem; font-size: 1.05rem; }
 .panel-heading { max-width: 760px; margin-bottom: 1.8rem; }
 .panel-heading > p:last-child { margin-bottom: 0; color: var(--muted); }
 .result-heading { display: flex; max-width: none; justify-content: space-between; gap: 1rem; }
+.result-heading-actions { display: flex; align-items: flex-start; gap: .65rem; }
+.start-again { white-space: nowrap; }
 .prototype-badge { align-self: flex-start; padding: .45rem .7rem; border-radius: 999px; background: var(--warning-soft); color: var(--warning); font-size: .72rem; font-weight: 850; white-space: nowrap; }
 .example-strip { margin-bottom: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: .85rem; background: var(--surface-soft); }
 .example-strip > label { display: block; margin-bottom: .5rem; font-size: .8rem; font-weight: 800; }
@@ -265,6 +267,7 @@ footer p { max-width: 680px; margin: 0; }
   .nww-box { grid-template-columns: 1fr; }
   .nww-alert { grid-column: auto; }
   .result-heading { display: block; }
+  .result-heading-actions { margin-top: .8rem; }
   .prototype-badge { display: inline-block; margin-top: .5rem; }
   .selection-actions { flex-direction: column; }
 }
@@ -274,11 +277,13 @@ footer p { max-width: 680px; margin: 0; }
   .panel-actions.split { align-items: stretch; flex-direction: column-reverse; }
   .panel-actions .button { width: 100%; }
   .stones-heading { align-items: flex-start; flex-direction: column; }
+  .result-heading-actions { align-items: stretch; flex-direction: column; }
+  .start-again { width: 100%; }
   h1 { font-size: 2.55rem; }
 }
 @media print {
   :root, [data-theme="light"] { --page: #fff; --surface: #fff; --surface-soft: #fff; --text: #111; --muted: #444; --border: #bbb; }
-  .site-header, .hero, .principles, footer, .workspace-head, [data-panel="1"], .panel-actions, .selection-bar, .theme-toggle, .stone-select, .prototype-badge, .strand-chooser { display: none !important; }
+  .site-header, .hero, .principles, footer, .workspace-head, [data-panel="1"], .panel-actions, .selection-bar, .theme-toggle, .stone-select, .result-heading-actions, .strand-chooser { display: none !important; }
   body { background: #fff; }
   .workspace { width: 100%; margin: 0; border: 0; box-shadow: none; }
   [data-panel="2"] { display: block !important; padding: 0; }

@@ -59,7 +59,7 @@
         <div class="panel active" data-panel="1">
           <div class="panel-heading">
             <p class="step-label">Step 1 of 2</p>
-            <h3>Choose how you want to start</h3>
+              <h3 id="startHeading" tabindex="-1">Choose how you want to start</h3>
             <p>Use a ready-made example for the quickest route, or paste an anonymised EHCP outcome and let the tool break down its actual wording.</p>
           </div>
 
@@ -129,7 +129,10 @@
               <h3>Shape the stepping stones</h3>
               <p>Edit the draft so it reflects the learner, their aspirations and the support that remains available.</p>
             </div>
-            <span class="prototype-badge">Draft for professional review</span>
+            <div class="result-heading-actions">
+              <button class="button secondary start-again" id="startAgain" type="button">← Start again</button>
+              <span class="prototype-badge">Draft for professional review</span>
+            </div>
           </div>
 
           <div class="strand-summary">

@@ -65,6 +65,29 @@ function setTheme(theme) { document.documentElement.dataset.theme = theme; const
 function populateExamples() { const select = qs("#exampleSelect"); exampleGroups.forEach(group => { const optgroup = document.createElement("optgroup"); optgroup.label = group.label; Object.entries(group.items).forEach(([key, item]) => { const option = document.createElement("option"); option.value = key; option.textContent = `• ${item[0]}`; optgroup.append(option); }); select.append(optgroup); }); }
 function showPanel(number) { if (number > state.maxReached) return; state.panel = number; qsa("[data-panel]").forEach(panel => { const active = Number(panel.dataset.panel) === number; panel.hidden = !active; panel.classList.toggle("active", active); }); qsa("[data-step-indicator]").forEach(item => { const step = Number(item.dataset.stepIndicator); item.classList.toggle("active", step === number); item.classList.toggle("complete", step < number); }); updateNavigation(); qs("#workspace").scrollIntoView({ behavior: "smooth", block: "start" }); }
 function updateNavigation() { qsa("[data-nav-step]").forEach(control => { const step = Number(control.dataset.navStep); control.disabled = step > state.maxReached; control.setAttribute("aria-current", step === state.panel ? "step" : "false"); }); }
+function startAgain() {
+  qs("#exampleSelect").value = "";
+  qs("#useExample").disabled = true;
+  qs("#sourceText").value = "";
+  qs("#startingPoint").value = "";
+  qs("#provisionText").value = "";
+  qs("#exampleError").hidden = true;
+  qs("#sourceError").hidden = true;
+  qs("#strandChooser").hidden = true;
+  qs("#changeStrand").setAttribute("aria-expanded", "false");
+  qs("#nwwBox").classList.remove("possible", "needed");
+  qs(".support-details").open = false;
+  setNww("no");
+  Object.assign(state, { panel: 1, maxReached: 1, mode: "custom", selectedStrand: null, recommendedStrand: null, selectedStep: 0, originalSteps: [], extractedAction: "" });
+  qs("#stonesList").replaceChildren();
+  qs("#outcomeDraft").value = "";
+  qs("#sourceSummary").textContent = "";
+  qs("#provisionSummary").textContent = "";
+  updateCounter();
+  showPanel(1);
+  setTimeout(() => qs("#startHeading").focus({ preventScroll: true }), 350);
+  showToast("Ready to crunch another outcome.");
+}
 function setNww(value) { const input = qs(`input[name="nww"][value="${value}"]`); if (input) input.checked = true; updateNww(); }
 function updateNww() { const needed = qs('input[name="nww"]:checked')?.value === "yes"; qs("#nwwAlert").hidden = !needed; qs("#nwwBox").classList.toggle("needed", needed); if (qs("#nwwResult")) qs("#nwwResult").hidden = !needed; }
 function updateCounter() { qs("#sourceCount").textContent = qs("#sourceText").value.length; }
@@ -152,6 +175,7 @@ function initialise() {
   qs("#useExample").addEventListener("click", useSelectedExample);
   qs("#crunchOutcome").addEventListener("click", crunchOutcome);
   qs("#changeStrand").addEventListener("click", () => { const chooser = qs("#strandChooser"); chooser.hidden = !chooser.hidden; qs("#changeStrand").setAttribute("aria-expanded", String(!chooser.hidden)); });
+  qs("#startAgain").addEventListener("click", startAgain);
   qsa("[data-back]").forEach(button => button.addEventListener("click", () => showPanel(Number(button.dataset.back))));
   qs("#resetSteps").addEventListener("click", () => { renderSteps(state.originalSteps); showToast("Suggested wording restored."); });
   qs("#copyStep").addEventListener("click", copySelectedStep);
