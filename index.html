@@ -59,64 +59,67 @@
         <div class="panel active" data-panel="1">
           <div class="panel-heading">
             <p class="step-label">Step 1 of 2</p>
-            <h3>What are we working from?</h3>
-            <p>Paste a broad outcome or describe the learner’s difficulty. Add provision separately so it is protected throughout the process.</p>
+            <h3>Choose how you want to start</h3>
+            <p>Use a ready-made example for the quickest route, or paste an anonymised EHCP outcome and let the tool break down its actual wording.</p>
           </div>
 
-          <div class="example-strip">
-            <label for="exampleSelect">Start with an anonymised example</label>
-            <div class="inline-control">
-              <select id="exampleSelect"><option value="">Choose an example…</option></select>
-              <button class="button secondary" id="loadExample" type="button">Load example</button>
-            </div>
+          <div class="start-choice-grid">
+            <article class="start-card example-route">
+              <div class="route-label"><span>1</span> Quickest route</div>
+              <h4>Start with a guided example</h4>
+              <p>Choose the closest match. Its starting point, provision and stepping stones will be loaded for you.</p>
+              <label class="route-field" for="exampleSelect">Choose an anonymised example</label>
+              <select id="exampleSelect"><option value="">Select an example…</option></select>
+              <button class="button primary route-action" id="useExample" type="button" disabled>Use and crunch this example <span aria-hidden="true">→</span></button>
+              <div class="validation-message" id="exampleError" role="alert" hidden>Choose an example from the list first.</div>
+            </article>
+
+            <div class="route-divider" aria-hidden="true"><span>or</span></div>
+
+            <article class="start-card custom-route">
+              <div class="route-label"><span>2</span> Custom route</div>
+              <h4>Paste an EHCP outcome</h4>
+              <p>The tool identifies the likely learner action and builds a graduated sequence around that wording. Always review the result.</p>
+              <label class="field custom-outcome-field">
+                <span>Outcome text <em>Required</em></span>
+                <small>Remove names and identifying information before pasting.</small>
+                <textarea id="sourceText" rows="6" maxlength="1000" placeholder="For example: By the end of the programme, the learner will communicate their support needs to familiar and unfamiliar staff..."></textarea>
+                <span class="counter"><span id="sourceCount">0</span> / 1000</span>
+              </label>
+
+              <details class="support-details">
+                <summary>Add starting point, provision or NWW information <span>Optional</span></summary>
+                <div class="support-details-body">
+                  <label class="field">
+                    <span>Current starting point</span>
+                    <small>What can the learner do now, and when do they need help?</small>
+                    <textarea id="startingPoint" rows="4" maxlength="500" placeholder="For example: Communicates a familiar need when prompted by a trusted adult."></textarea>
+                  </label>
+                  <label class="field provision-field">
+                    <span>Support or provision that must remain in place</span>
+                    <small>This belongs to staff or the setting—not to the learner.</small>
+                    <textarea id="provisionText" rows="4" maxlength="700" placeholder="For example: Staff allow processing time and use the learner's agreed communication approach."></textarea>
+                  </label>
+                  <fieldset class="nww-compact" id="nwwBox">
+                    <legend>Access arrangements / NWW</legend>
+                    <div class="nww-options">
+                      <label><input type="radio" name="nww" value="yes" /> <span>NWW needed</span></label>
+                      <label><input type="radio" name="nww" value="no" checked /> <span>No / not sure</span></label>
+                    </div>
+                    <p class="nww-alert" id="nwwAlert" hidden><strong>NWW action:</strong> complete the normal way of working interview/form. This does not approve an exam arrangement.</p>
+                  </fieldset>
+                </div>
+              </details>
+
+              <div class="validation-message" id="sourceError" role="alert" hidden>Paste an EHCP outcome before crunching.</div>
+              <button class="button secondary route-action" id="crunchOutcome" type="button">Crunch pasted outcome <span aria-hidden="true">→</span></button>
+            </article>
           </div>
 
-          <aside class="specialist-note">
+          <aside class="specialist-note choice-note">
             <span aria-hidden="true">i</span>
-            <p><strong>Complex or exceptional outcome?</strong> Use this bank as a conversation starter and involve the SEND team for specialist advice.</p>
+            <p><strong>Complex or exceptional outcome?</strong> Use this tool as a conversation starter and involve the SEND team for specialist advice.</p>
           </aside>
-
-          <div class="form-grid">
-            <label class="field field-wide">
-              <span>EHCP outcome or description of need <em>Required</em></span>
-              <small>Keep the wording broad at this stage—the tool will help unpack it.</small>
-              <textarea id="sourceText" rows="5" maxlength="700" placeholder="For example: The learner has difficulty processing and understanding verbal and written instructions."></textarea>
-              <span class="counter"><span id="sourceCount">0</span> / 700</span>
-            </label>
-
-            <label class="field">
-              <span>Current starting point</span>
-              <small>What can the learner do now, and when do they need help?</small>
-              <textarea id="startingPoint" rows="5" maxlength="500" placeholder="For example: Follows one familiar instruction when it is repeated and supported by a visual prompt."></textarea>
-            </label>
-
-            <label class="field provision-field">
-              <span>Support or provision that must remain in place</span>
-              <small>This belongs to staff or the setting—not to the learner.</small>
-              <textarea id="provisionText" rows="5" maxlength="700" placeholder="For example: Staff provide written instructions, break tasks into manageable chunks and check understanding."></textarea>
-            </label>
-          </div>
-
-          <fieldset class="nww-box" id="nwwBox">
-            <legend>Normal way of working (NWW)</legend>
-            <div class="nww-copy">
-              <strong>Does this support include a routine access arrangement?</strong>
-              <p>For example: a word processor, extra time, supervised rest breaks, a reader, a scribe or assistive technology.</p>
-            </div>
-            <div class="nww-options">
-              <label><input type="radio" name="nww" value="yes" /> <span>NWW needed</span></label>
-              <label><input type="radio" name="nww" value="no" checked /> <span>No / not sure</span></label>
-            </div>
-            <div class="nww-alert" id="nwwAlert" hidden>
-              <span aria-hidden="true">!</span>
-              <div><strong>NWW action needed</strong><p>Complete your centre’s normal way of working interview/form and follow the agreed access-arrangements process. This flag does not approve an examination arrangement.</p></div>
-            </div>
-          </fieldset>
-
-          <div class="validation-message" id="sourceError" role="alert" hidden>Please enter an outcome or description of need.</div>
-          <div class="panel-actions end">
-            <button class="button primary" id="crunchOutcome" type="button">Crunch this outcome <span aria-hidden="true">→</span></button>
-          </div>
         </div>
 
         <div class="panel" data-panel="2" hidden>
@@ -132,6 +135,10 @@
           <div class="strand-summary">
             <div><span>Best-fit outcome strand</span><strong id="strandName"></strong></div>
             <button class="button ghost compact" id="changeStrand" type="button" aria-expanded="false" aria-controls="strandChooser">Change suggestion</button>
+          </div>
+          <div class="source-summary" id="sourceSummaryWrap">
+            <span>Wording used to build this draft</span>
+            <p id="sourceSummary"></p>
           </div>
           <div class="strand-chooser" id="strandChooser" hidden>
             <p>Choose a different strand to rebuild the draft. This is optional—the suggested strand is only a starting point.</p>

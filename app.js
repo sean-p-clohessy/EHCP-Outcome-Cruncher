@@ -46,7 +46,18 @@ const strands = {
   independence: { icon: "→", title: "Independence and preparation for adulthood", description: "Plan, communicate and complete meaningful routines across adult-life contexts.", keywords: ["independen", "travel", "workplace", "employment", "routine", "appointment", "self-advoc", "support needs"], outcome: "The learner will use agreed planning, communication and problem-solving strategies to participate with increasing independence in meaningful adult-life routines.", steps: ["Complete one familiar part of an agreed routine using a clear prompt and support from a trusted adult.", "Follow a short accessible plan for a familiar routine, checking each stage with an adult at agreed points.", "Recognise a predictable difficulty and use an agreed strategy or request support with no more than one prompt.", "Plan, complete and review a familiar routine across relevant community, education or work-related settings."] }
 };
 
-const state = { panel: 1, maxReached: 1, selectedStrand: null, recommendedStrand: null, selectedStep: 0, originalSteps: [] };
+const defaultActions = {
+  recording: "use an agreed recording method to produce clear, readable work",
+  processing: "follow and act on information using agreed processing and clarification strategies",
+  memory: "use an agreed memory or planning strategy to follow and complete task steps",
+  attention: "recognise changes in attention and use an agreed strategy to return to the activity",
+  communication: "use their agreed communication approach to express needs and ideas and repair misunderstandings",
+  socialEmotional: "recognise and communicate their needs and use an agreed strategy to regulate and re-engage",
+  access: "recognise when agreed support is needed and use it effectively",
+  independence: "plan and complete a meaningful routine using agreed communication and problem-solving strategies"
+};
+
+const state = { panel: 1, maxReached: 1, mode: "custom", selectedStrand: null, recommendedStrand: null, selectedStep: 0, originalSteps: [], extractedAction: "" };
 const qs = selector => document.querySelector(selector);
 const qsa = selector => [...document.querySelectorAll(selector)];
 
@@ -57,13 +68,71 @@ function updateNavigation() { qsa("[data-nav-step]").forEach(control => { const 
 function setNww(value) { const input = qs(`input[name="nww"][value="${value}"]`); if (input) input.checked = true; updateNww(); }
 function updateNww() { const needed = qs('input[name="nww"]:checked')?.value === "yes"; qs("#nwwAlert").hidden = !needed; qs("#nwwBox").classList.toggle("needed", needed); if (qs("#nwwResult")) qs("#nwwResult").hidden = !needed; }
 function updateCounter() { qs("#sourceCount").textContent = qs("#sourceText").value.length; }
-function loadSelectedExample() { const example = examples[qs("#exampleSelect").value]; if (!example) return; qs("#sourceText").value = example[1]; qs("#startingPoint").value = example[2]; qs("#provisionText").value = example[3]; state.recommendedStrand = example[4]; setNww(example[5] ? "yes" : "no"); updateCounter(); showToast("Example loaded—edit any wording you need."); }
+function useSelectedExample() {
+  const example = examples[qs("#exampleSelect").value];
+  if (!example) { qs("#exampleError").hidden = false; return; }
+  qs("#exampleError").hidden = true;
+  qs("#sourceText").value = example[1];
+  qs("#startingPoint").value = example[2];
+  qs("#provisionText").value = example[3];
+  state.mode = "example";
+  state.recommendedStrand = example[4];
+  setNww(example[5] ? "yes" : "no");
+  updateCounter();
+  crunchOutcome(true);
+}
 function inferStrand(text) { const source = text.toLowerCase(); let best = "processing"; let bestScore = -1; Object.entries(strands).forEach(([key, strand]) => { const score = strand.keywords.reduce((total, keyword) => total + (source.includes(keyword) ? 1 : 0), 0); if (score > bestScore) { best = key; bestScore = score; } }); return best; }
 function inferNww(text) { return ["word processor", "extra time", "additional time", "rest break", "reader", "scribe", "assistive technology", "overlay"].some(term => text.toLowerCase().includes(term)); }
+function sentenceCaseAction(action) { return action.trim().replace(/^[,;:\-–—\s]+/, "").replace(/[.;:,\s]+$/, "").replace(/^(?:be able to|independently)\s+/i, "").replace(/^([A-Z])/, letter => letter.toLowerCase()); }
+function extractOutcomeAction(source, strandKey) {
+  const text = source.replace(/\s+/g, " ").trim();
+  const future = text.match(/\b(?:will be able to|will|can)\s+(.+)$/i);
+  if (!future) return defaultActions[strandKey];
+  let action = future[1].split(/\b(?:so that|in order to|which will enable|thereby)\b/i)[0].split(/[.!?](?:\s|$)/)[0];
+  action = action.replace(/\bby the end of\b.+$/i, "");
+  return sentenceCaseAction(action) || defaultActions[strandKey];
+}
+function makeCustomSteps(action) {
+  const clean = sentenceCaseAction(action);
+  return [
+    `With direct support and agreed provision, ${clean} during one familiar activity.`,
+    `Using an agreed prompt or strategy, ${clean} in a familiar context with no more than two prompts.`,
+    `With no more than one prompt, ${clean} in a familiar context and review what helped.`,
+    `Independently ${clean} across at least two relevant contexts or settings.`
+  ];
+}
+function makeOutcomeDraft(source, action, strandKey) {
+  if (/\b(?:will be able to|will|can)\b/i.test(source)) return `The learner will ${sentenceCaseAction(action)}.`;
+  return strands[strandKey].outcome;
+}
 function renderStrands() { const grid = qs("#strandGrid"); grid.innerHTML = ""; Object.entries(strands).forEach(([key, strand]) => { const button = document.createElement("button"); button.type = "button"; button.className = `strand-card${key === state.selectedStrand ? " selected" : ""}`; button.setAttribute("role", "radio"); button.setAttribute("aria-checked", String(key === state.selectedStrand)); button.innerHTML = `${key === state.recommendedStrand ? '<span class="recommendation">Suggested</span>' : ""}<span class="strand-icon" aria-hidden="true">${strand.icon}</span><strong>${strand.title}</strong><p>${strand.description}</p>`; button.addEventListener("click", () => { state.selectedStrand = key; buildResult(); renderStrands(); showToast(`Draft rebuilt for ${strand.title}.`); }); grid.append(button); }); }
 function renderSteps(steps) { const list = qs("#stonesList"); list.innerHTML = ""; steps.forEach((step, index) => { const wrapper = document.createElement("div"); wrapper.className = `stone${index === state.selectedStep ? " selected" : ""}`; const button = document.createElement("button"); button.type = "button"; button.className = "stone-select"; button.setAttribute("aria-label", `Select stepping stone ${index + 1}`); button.textContent = index + 1; button.addEventListener("click", () => selectStep(index)); const field = document.createElement("div"); const label = document.createElement("label"); label.htmlFor = `step-${index}`; label.textContent = ["Supported start", "Developing use", "Reduced prompting", "Across contexts"][index]; const textarea = document.createElement("textarea"); textarea.id = `step-${index}`; textarea.value = step; textarea.rows = 3; textarea.addEventListener("focus", () => selectStep(index)); field.append(label, textarea); wrapper.append(button, field); list.append(wrapper); }); updateSelectionLabel(); }
-function buildResult() { const strand = strands[state.selectedStrand]; state.originalSteps = [...strand.steps]; state.selectedStep = 0; qs("#strandName").textContent = strand.title; qs("#outcomeDraft").value = strand.outcome; qs("#provisionSummary").textContent = qs("#provisionText").value.trim() || "No provision was entered. Add and agree the support that must remain in place before using a stepping stone."; renderSteps(state.originalSteps); updateNww(); }
-function crunchOutcome() { const source = qs("#sourceText").value.trim(); if (!source) { qs("#sourceError").hidden = false; qs("#sourceText").focus(); return; } qs("#sourceError").hidden = true; state.recommendedStrand = state.recommendedStrand || inferStrand(source); state.selectedStrand = state.recommendedStrand; if (inferNww(`${source} ${qs("#provisionText").value}`) && qs('input[name="nww"]:checked')?.value !== "yes") { setNww("yes"); showToast("Possible access arrangement found—NWW action highlighted."); } renderStrands(); buildResult(); state.maxReached = 2; showPanel(2); }
+function buildResult() {
+  const source = qs("#sourceText").value.trim();
+  const strand = strands[state.selectedStrand];
+  state.extractedAction = extractOutcomeAction(source, state.selectedStrand);
+  state.originalSteps = state.mode === "custom" ? makeCustomSteps(state.extractedAction) : [...strand.steps];
+  state.selectedStep = 0;
+  qs("#strandName").textContent = strand.title;
+  qs("#sourceSummary").textContent = state.mode === "custom" ? `Learner action identified: “${state.extractedAction}”` : source;
+  qs("#outcomeDraft").value = state.mode === "custom" ? makeOutcomeDraft(source, state.extractedAction, state.selectedStrand) : strand.outcome;
+  qs("#provisionSummary").textContent = qs("#provisionText").value.trim() || "No provision was entered. Add and agree the support that must remain in place before using a stepping stone.";
+  renderSteps(state.originalSteps);
+  updateNww();
+}
+function crunchOutcome(fromExample = false) {
+  const source = qs("#sourceText").value.trim();
+  if (!source) { qs("#sourceError").hidden = false; qs("#sourceText").focus(); return; }
+  qs("#sourceError").hidden = true;
+  if (!fromExample) { state.mode = "custom"; state.recommendedStrand = inferStrand(source); }
+  state.selectedStrand = state.recommendedStrand || inferStrand(source);
+  if (inferNww(`${source} ${qs("#provisionText").value}`) && qs('input[name="nww"]:checked')?.value !== "yes") setNww("yes");
+  renderStrands();
+  buildResult();
+  state.maxReached = 2;
+  showPanel(2);
+  showToast(state.mode === "custom" ? "Pasted outcome crunched—review the suggested wording." : "Example loaded and crunched.");
+}
 function selectStep(index) { state.selectedStep = index; qsa(".stone").forEach((stone, i) => stone.classList.toggle("selected", i === index)); updateSelectionLabel(); }
 function updateSelectionLabel() { qs("#selectionCount").textContent = `Step ${state.selectedStep + 1} selected`; }
 async function copySelectedStep() { const selected = qs(`#step-${state.selectedStep}`).value.trim(); try { await navigator.clipboard.writeText(selected); showToast("Selected stepping stone copied."); } catch { qs(`#step-${state.selectedStep}`).select(); showToast("Use your browser's Copy command to copy the highlighted wording."); } }
@@ -76,10 +145,11 @@ function initialise() {
   setTheme(savedTheme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
   qs("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
   qsa("[data-nav-step]").forEach(control => control.addEventListener("click", () => showPanel(Number(control.dataset.navStep))));
-  qs("#sourceText").addEventListener("input", () => { state.recommendedStrand = null; updateCounter(); });
+  qs("#exampleSelect").addEventListener("change", () => { qs("#useExample").disabled = !qs("#exampleSelect").value; qs("#exampleError").hidden = true; });
+  qs("#sourceText").addEventListener("input", () => { state.mode = "custom"; state.recommendedStrand = null; updateCounter(); });
   qs("#provisionText").addEventListener("input", () => qs("#nwwBox").classList.toggle("possible", inferNww(qs("#provisionText").value)));
   qsa('input[name="nww"]').forEach(input => input.addEventListener("change", updateNww));
-  qs("#loadExample").addEventListener("click", loadSelectedExample);
+  qs("#useExample").addEventListener("click", useSelectedExample);
   qs("#crunchOutcome").addEventListener("click", crunchOutcome);
   qs("#changeStrand").addEventListener("click", () => { const chooser = qs("#strandChooser"); chooser.hidden = !chooser.hidden; qs("#changeStrand").setAttribute("aria-expanded", String(!chooser.hidden)); });
   qsa("[data-back]").forEach(button => button.addEventListener("click", () => showPanel(Number(button.dataset.back))));
