@@ -61,9 +61,9 @@ const state = { panel: 1, maxReached: 1, mode: "custom", selectedStrand: null, r
 const qs = selector => document.querySelector(selector);
 const qsa = selector => [...document.querySelectorAll(selector)];
 
-function setTheme(theme) { document.documentElement.dataset.theme = theme; const dark = theme === "dark"; qs("#themeToggle").setAttribute("aria-pressed", String(dark)); qs("#themeToggle").setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode"); qs("#themeLabel").textContent = dark ? "Dark mode" : "Light mode"; document.querySelector('meta[name="theme-color"]').content = dark ? "#0d1426" : "#f4f2fb"; localStorage.setItem("outcome-cruncher-theme", theme); }
+function setTheme(theme) { document.documentElement.dataset.theme = theme; const dark = theme === "dark"; qs("#themeToggle").setAttribute("aria-pressed", String(dark)); qs("#themeToggle").setAttribute("aria-label", dark ? "Switch to light appearance" : "Switch to dark appearance"); qs("#themeIcon").textContent = dark ? "☀" : "☾"; qs("#themeLabel").textContent = dark ? "Light appearance" : "Dark appearance"; document.querySelector('meta[name="theme-color"]').content = dark ? "#000000" : "#f2f2f7"; localStorage.setItem("outcome-cruncher-theme", theme); }
 function populateExamples() { const select = qs("#exampleSelect"); exampleGroups.forEach(group => { const optgroup = document.createElement("optgroup"); optgroup.label = group.label; Object.entries(group.items).forEach(([key, item]) => { const option = document.createElement("option"); option.value = key; option.textContent = `• ${item[0]}`; optgroup.append(option); }); select.append(optgroup); }); }
-function showPanel(number) { if (number > state.maxReached) return; state.panel = number; qsa("[data-panel]").forEach(panel => { const active = Number(panel.dataset.panel) === number; panel.hidden = !active; panel.classList.toggle("active", active); }); qsa("[data-step-indicator]").forEach(item => { const step = Number(item.dataset.stepIndicator); item.classList.toggle("active", step === number); item.classList.toggle("complete", step < number); }); updateNavigation(); qs("#workspace").scrollIntoView({ behavior: "smooth", block: "start" }); }
+function showPanel(number) { if (number > state.maxReached) return; state.panel = number; qsa("[data-panel]").forEach(panel => { const active = Number(panel.dataset.panel) === number; panel.hidden = !active; panel.classList.toggle("active", active); }); qsa("[data-step-indicator]").forEach(item => { const step = Number(item.dataset.stepIndicator); item.classList.toggle("active", step === number); item.classList.toggle("complete", step < number); }); updateNavigation(); const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches; qs("#workspace").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" }); }
 function updateNavigation() { qsa("[data-nav-step]").forEach(control => { const step = Number(control.dataset.navStep); control.disabled = step > state.maxReached; control.setAttribute("aria-current", step === state.panel ? "step" : "false"); }); }
 function startAgain() {
   qs("#exampleSelect").value = "";
@@ -85,7 +85,7 @@ function startAgain() {
   qs("#provisionSummary").textContent = "";
   updateCounter();
   showPanel(1);
-  setTimeout(() => qs("#startHeading").focus({ preventScroll: true }), 350);
+  setTimeout(() => qs("#startHeading").focus({ preventScroll: true }), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 250);
   showToast("Ready to crunch another outcome.");
 }
 function setNww(value) { const input = qs(`input[name="nww"][value="${value}"]`); if (input) input.checked = true; updateNww(); }
@@ -165,7 +165,7 @@ function showToast(message) { const toast = qs("#toast"); toast.textContent = me
 function initialise() {
   populateExamples();
   const savedTheme = localStorage.getItem("outcome-cruncher-theme");
-  setTheme(savedTheme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+  setTheme(savedTheme || "light");
   qs("#themeToggle").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
   qsa("[data-nav-step]").forEach(control => control.addEventListener("click", () => showPanel(Number(control.dataset.navStep))));
   qs("#exampleSelect").addEventListener("change", () => { qs("#useExample").disabled = !qs("#exampleSelect").value; qs("#exampleError").hidden = true; });

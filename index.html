@@ -1,11 +1,18 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Turn broad EHCP outcomes and descriptions of need into editable stepping-stone outcomes." />
-    <meta name="theme-color" content="#0d1426" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f2f7" />
     <title>EHCP Outcome Cruncher</title>
+    <script>
+      try {
+        const savedTheme = localStorage.getItem("outcome-cruncher-theme");
+        if (savedTheme === "dark" || savedTheme === "light") document.documentElement.dataset.theme = savedTheme;
+      } catch {}
+    </script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -19,9 +26,9 @@
           <small>From broad outcomes to workable steps</small>
         </span>
       </a>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="true">
-        <span aria-hidden="true">◐</span>
-        <span id="themeLabel">Dark mode</span>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+        <span id="themeIcon" aria-hidden="true">☾</span>
+        <span id="themeLabel">Dark appearance</span>
       </button>
     </header>
 
@@ -47,7 +54,7 @@
       <section class="workspace" id="workspace" aria-labelledby="workspace-title">
         <div class="workspace-head">
           <div>
-            <p class="eyebrow">Prototype workspace</p>
+            <p class="eyebrow">Workbench</p>
             <h2 id="workspace-title">Crunch an outcome</h2>
           </div>
           <ol class="stepper" aria-label="Progress">
